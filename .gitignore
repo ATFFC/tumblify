@@ -1,0 +1,12 @@
+# build output
+native/build/
+native/bin/
+*.dll
+*.pdb
+*.obj
+__pycache__/
+*.pyc
+
+# local
+.vs/
+*.zip
