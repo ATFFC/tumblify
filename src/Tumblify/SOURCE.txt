@@ -1,0 +1,12 @@
+Tumblify 1.0 - source code
+
+Source code: https://github.com/ATFFC/tumblify
+This release: https://github.com/ATFFC/tumblify/releases/tag/v1.0
+
+Tumblify's Python code and native bridge are licensed under GPL-3.0 (see LICENSE).
+The bundled Box3D physics engine is MIT licensed (see LICENSE_BOX3D.txt).
+The repository contains the complete source of this add-on, including the
+modified Box3D used to build native/bin/box3d_blender.dll, and build instructions.
+
+If you pass this add-on on to someone else, keep this file, LICENSE and
+LICENSE_BOX3D.txt with it, so they can get the source code at the link above.

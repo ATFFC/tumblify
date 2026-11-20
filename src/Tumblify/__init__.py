@@ -17,6 +17,7 @@ bl_info = {
     "location": "View3D > Sidebar > Tumblify",
     "description": "Physics-Based Object Placement for Blender, powered by Box3D",
     "category": "Physics",
+    "doc_url": "https://github.com/ATFFC/tumblify",
 }
 
 from .addon import register, unregister
