@@ -1,0 +1,26 @@
+schema_version = "1.0.0"
+
+id = "tumblify"
+version = "1.0.0"
+name = "Tumblify"
+tagline = "Physics-based object placement powered by Box3D"
+maintainer = "CG Corner addons"
+type = "add-on"
+
+website = "https://github.com/ATFFC/tumblify"
+
+tags = ["Physics", "Object"]
+
+blender_version_min = "5.2.0"
+
+license = ["SPDX:GPL-3.0-only"]
+copyright = [
+  "2026 CG Corner addons",
+  "2026 Erin Catto (Box3D, MIT)",
+]
+
+# The bundled native bridge (native/bin/box3d_blender.dll) is built for Windows x64 only.
+platforms = ["windows-x64"]
+
+[permissions]
+files = "Write Emitter Bake cache files to disk"

@@ -8,6 +8,9 @@ This module must stay free of Blender runtime state. It is safe to import from f
 feature modules without creating registration or operator side effects.
 """
 
+# Keep in sync with version in blender_manifest.toml.
+ADDON_VERSION = (1, 0, 0)
+
 BRUSH_NAME = "Tumblify_Brush"
 GUIDE_NAME = "Tumblify_Emitter_Guide"
 GUIDE_MOD_NAME = "Tumblify Emitter Guide"

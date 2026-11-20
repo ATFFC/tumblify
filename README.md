@@ -18,7 +18,7 @@ The bundled Box3D is based on commit `f36d061ba26998c87cb7dc593a4065aaa03fb7eb` 
 
 | Path | Contents |
 | --- | --- |
-| `src/Tumblify` | The Blender add-on (Python) |
+| `src/Tumblify` | The Blender extension (Python, `blender_manifest.toml`) |
 | `native` | C/C++ bridge between Blender and Box3D, CMake project |
 | `vendor/box3d` | Box3D source with Tumblify's changes |
 | `Build-Native.ps1` | Builds `native/bin/box3d_blender.dll` |
@@ -31,7 +31,16 @@ Windows x64, CMake 3.22+ and Visual Studio C++ Build Tools with the Windows SDK.
 powershell -ExecutionPolicy Bypass -File .\Build-Native.ps1
 ```
 
-The DLL lands in `native/bin/box3d_blender.dll`. To assemble an installer, copy it to `src/Tumblify/native/bin/box3d_blender.dll` and zip the `Tumblify` folder from `src`, keeping `Tumblify` as the ZIP root. The build script does not touch an installed add-on.
+The DLL lands in `native/bin/box3d_blender.dll`. The build script does not touch an installed add-on.
 
-SHA-256 of the DLL in the distributed 1.0 installer (`Tumblify_1.0_Win64_Blender52.zip`):
+To package the extension, copy the DLL to `src/Tumblify/native/bin/box3d_blender.dll` and run Blender's extension builder:
+
+```powershell
+blender --command extension build --source-dir src\Tumblify --output-dir dist
+blender --command extension validate dist\tumblify-1.0.0.zip
+```
+
+Install the resulting ZIP by dragging it into Blender, or from Edit > Preferences > Get Extensions > Install from Disk.
+
+SHA-256 of the DLL in the distributed 1.0 package (`Tumblify_1.0_Win64_Blender52.zip`):
 `f507798c7ee1783c1116fea5fc17dc522ea421d99b984719be190c573789f57e`

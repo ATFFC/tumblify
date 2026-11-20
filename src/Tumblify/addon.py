@@ -15,7 +15,7 @@ from mathutils.bvhtree import BVHTree
 from bpy_extras import view3d_utils
 from gpu_extras.batch import batch_for_shader
 from bpy.app.handlers import persistent
-from . import bl_info
+from .constants import ADDON_VERSION
 from .bridge import World, get_lib, CollisionGeometryError
 from .bake_cache import BakeCacheFiles, select_backend
 from .mesh_cache import clear_mesh_cache, mesh_cache_info
@@ -662,7 +662,7 @@ _CONTACT_PRESET_APPLYING=False
 def _tumblify_preferences(context=None):
     try:
         prefs=(context or bpy.context).preferences
-        a=prefs.addons.get(__package__ or 'Tumblify') or prefs.addons.get('Tumblify')
+        a=prefs.addons.get(__package__)
         return a.preferences if a else None
     except Exception: return None
 
@@ -874,7 +874,7 @@ class TU_OT_preset_preferences(bpy.types.Operator):
     bl_idname='tumblify.preset_preferences'; bl_label='Edit Presets'
     def execute(self,context):
         try:
-            bpy.ops.preferences.addon_show(module=__package__.split('.')[0])
+            bpy.ops.preferences.addon_show(module=__package__)
         except Exception as ex: self.report({'WARNING'},str(ex))
         return {'FINISHED'}
 
@@ -4906,7 +4906,7 @@ class TU_OT_drop_offline(bpy.types.Operator):
                 try:
                     cache_options = {'output_frames': self.requested_bake_frames} if self.bake_frames else {}
                     if self.bake_frames and self.bake_backend == 'DISK':
-                        self.bake_cache_files = BakeCacheFiles(self.bake_cache_root, self.bake_estimated_bytes, {'addon_version': '.'.join(map(str, bl_info['version'])), 'blend_file': bpy.data.filepath, 'scene': self.scene.name, 'frame_start': self.frame_start, 'requested_frames': self.requested_bake_frames, 'spawn_rate': float(st.spawn_rate), 'sources': list(self.source_names), 'instance_scales': [float(v) for v in self.scales], 'quaternion_layout': 'xyzw', 'position_units': 'Blender scene units', 'note': 'Transforms only; source geometry remains in the associated Blender scene'})
+                        self.bake_cache_files = BakeCacheFiles(self.bake_cache_root, self.bake_estimated_bytes, {'addon_version': '.'.join(map(str, ADDON_VERSION)), 'blend_file': bpy.data.filepath, 'scene': self.scene.name, 'frame_start': self.frame_start, 'requested_frames': self.requested_bake_frames, 'spawn_rate': float(st.spawn_rate), 'sources': list(self.source_names), 'instance_scales': [float(v) for v in self.scales], 'quaternion_layout': 'xyzw', 'position_units': 'Blender scene units', 'note': 'Transforms only; source geometry remains in the associated Blender scene'})
                         cache_options['cache_path'] = str(self.bake_cache_files.partial)
                     self.drop_job = self.world.drop_bake_begin(self.handles, self.targets if self.surface_mode else None, float(st.spawn_rate), float(self.effective_settle), float(st.physics_frequency), int(st.physics_substeps), float(st.scatter_magnet_strength), float(st.scatter_magnet_damping), bool(self.surface_mode and st.scatter_magnetized), bool(self.bake_frames), float(self.output_fps), **cache_options)
                 except Exception as exc:
@@ -9404,7 +9404,7 @@ class TU_OT_post_run(bpy.types.Operator):
         return _dispatch_runtime_modal(self, context, event, 'Tumblify Interactive simulation')
 
 class TU_AddonPreferences(bpy.types.AddonPreferences):
-    bl_idname='Tumblify'
+    bl_idname=__package__
     custom_presets: CollectionProperty(type=TU_PresetItem)
     preset_index: IntProperty(default=0,min=0)
     editor_preset: EnumProperty(name='Preset',items=_pref_editor_items,update=_pref_selection_update)
@@ -10050,6 +10050,10 @@ def _tumblify_normalize_display_on_load(_dummy=None):
         pass
 
 def register():
+    # The legacy add-on and the extension share class names; only one can be registered.
+    others=[m for m in bpy.context.preferences.addons.keys() if m!=__package__ and (m=='Tumblify' or m.endswith('.tumblify'))]
+    if others:
+        raise RuntimeError('Another Tumblify is already enabled ('+', '.join(others)+'). Disable and remove it in Preferences > Add-ons, then enable this one.')
     for c in classes:bpy.utils.register_class(c)
     bpy.types.Object.tumblify=PointerProperty(type=TumblifyObjectSettings); bpy.types.Scene.tumblify=PointerProperty(type=TumblifySceneSettings)
     bpy.types.Scene.tumblify_list_menu_kind=StringProperty(default='STATIC')
